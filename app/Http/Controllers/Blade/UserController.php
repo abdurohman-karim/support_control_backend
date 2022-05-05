@@ -16,7 +16,9 @@ class UserController extends Controller
     public function index()
     {
         abort_if_forbidden('user.show');
-        $users = User::where('id','!=',auth()->user()->id)->get();
+        $users = User::where('id','!=',auth()->user()->id)
+            ->with('roles')
+            ->get();
         return view('pages.user.index',compact('users'));
     }
 
@@ -125,18 +127,15 @@ class UserController extends Controller
     {
         abort_if_forbidden('user.delete');
 
-        $user = User::destroy($id);
+        $user = User::find($id);
         if ($user->hasRole('Super Admin') && !auth()->user()->hasRole('Super Admin'))
         {
             message_set("У вас нет разрешения на редактирование администратора",'error',5);
             return redirect()->back();
         }
+        $user->delete();
         DB::table('model_has_roles')->where('model_id',$id)->delete();
         DB::table('model_has_permissions')->where('model_id',$id)->delete();
-        $deleted_by = logObj(auth()->user());
-        $user_log = logObj(User::find($id));
-        $message = "\nDeleted By: $deleted_by\nDeleted user: $user_log";
-        LogWriter::user_activity($message,'DeletingUsers');
         return redirect()->route('userIndex');
     }
 
