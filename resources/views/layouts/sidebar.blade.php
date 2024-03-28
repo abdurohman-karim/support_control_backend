@@ -1,35 +1,47 @@
 <div class="vertical-menu">
-    <div id="sidebar-menu" class="mm-active">
-        <ul class="metismenu list-unstyled mm-show" id="side-menu">
-            @canany([
-               'permission.show',
-               'roles.show',
-               'user.show'])
-                <li class="{{ (Request::is('permission*') || Request::is('role*') || Request::is('user*')) ? 'mm-active':''}}">
-                    <a href="javascript: void(0);" class="has-arrow waves-effect" aria-expanded="false">
-                        <i class="bx bxs-cog"></i>
-                        <span>User Management</span>
+    <div data-simplebar class="h-100">
+        <div id="sidebar-menu">
+            <ul class="metismenu list-unstyled" id="side-menu">
+                <li class="menu-title font-size-10"><i>Управление</i></li>
+                <li>
+                    <a href="{{ route('home') }}" class="waves-effect">
+                        <i class="fas fa-home"></i>
+                        <span>Основной</span>
+                    </a>
+                </li>
+                @canany(["Просмотр пользователей","Просмотр разрешений","Посмотреть роли"])
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="fas fa-users-cog"></i>
+                        <span key="t-tasks">Контрол доступа</span>
                     </a>
                     <ul class="sub-menu mm-collapse" aria-expanded="false">
-                        <li class="{{ Request::is('user*') ? "mm-active":'' }}">
-                            <a class="waves-effect" href="{{ route('userIndex') }}"><i class="bx bx-user"></i> Users</a>
+                        @can("Просмотр пользователей")
+                        <li class="{{ Request::is('users*') ? "mm-active":''}}"><a href="{{ route('users.index') }}" key="t-task-list">
+                                <i class="fas fa-angle-right px-2"></i>
+                                Пользователи
+                            </a>
                         </li>
-                        <li class="{{ Request::is('role*') ? "mm-active":'' }}">
-                            <a class="waves-effect" href="{{ route('roleIndex') }}"><i class="bx bx-lock-open-alt"></i> Roles</a>
+                        @endcan
+                        @can('Посмотреть роли')
+                        <li class="{{ Request::is('roles*') ? "mm-active":''}}"><a href="{{ route('roles.index') }}" key="t-kanban-board">
+                                <i class="fas fa-angle-right px-2"></i>
+                                Роли
+                            </a>
                         </li>
-                        <li class="{{ Request::is('permission*') ? "mm-active":'' }}">
-                            <a href="{{ route('permissionIndex') }}"><i class="bx bxs-folder-open"></i> Permissions</a>
+                        @endcan
+                        @can('Просмотр разрешений')
+                        <li class="{{ Request::is('permissions*') ? "mm-active":''}}"><a href="{{ route('permissions.index') }}" key="t-create-task">
+                                <i class="fas fa-angle-right px-2"></i>
+                                Разрешения
+                            </a>
                         </li>
+                        @endcan
                     </ul>
                 </li>
-            @endcanany
-            @can('api-user.view')
-                <li class="{{ Request::is('api-users*') ? "mm-active":'' }}">
-                    <a class="waves-effect" href="{{ route('api-userIndex') }}">
-                        <i class="mdi mdi-api"></i><span> API Users</span>
-                    </a>
-                </li>
-            @endcan
-        </ul>
+                @endcanany
+
+            </ul>
+        </div>
     </div>
 </div>

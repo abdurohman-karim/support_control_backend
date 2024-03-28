@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
@@ -51,10 +50,14 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        if (isset($data['phone']))
+            $data['phone'] = substr((int)filter_var($data['phone'], FILTER_SANITIZE_NUMBER_INT),-9);
+
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'phone' => ['required', 'string','unique:users','min:9'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
     }
 
@@ -62,59 +65,36 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function create(array $data)
     {
-        // check if new coming user is first or single
-        $cnt = User::count();
 
-        $user = User::create([
+        $phone = substr((int)filter_var($data['phone'], FILTER_SANITIZE_NUMBER_INT),-9);
+
+        $user = new User();
+        $user->fill([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'phone' => $phone
         ]);
 
-        if ($cnt === 0)
+        $user->password = Hash::make($data['password']);
+        $user->save();
+
+        # Check if new coming user is first or single
+        if (User::count() == 1)
         {
-            $perms_cnt = Permission::count();
-
-            if ($perms_cnt === 0)
-            {
-                Permission::insert([
-                    ["name" => 'permission.show', "title" => 'Ruxsatlarni ko\'rish', "guard_name" => 'web'],
-                    ["name" => 'permission.edit', "title" => 'Ruxsatlarni o\'zgartirish', "guard_name" => 'web'],
-                    ["name" => 'permission.add', "title" => 'Yangi ruxsat qo\'shish', "guard_name" => 'web'],
-                    ["name" => 'permission.delete', "title" => 'Ruxsatlarni o\'chirish', "guard_name" => 'web'],
-
-                    ["name" => 'roles.show', "title" => 'Rollarni ko\'rish', "guard_name" => 'web'],
-                    ["name" => 'roles.edit', "title" => 'Rollarni o\'zgartirish', "guard_name" => 'web'],
-                    ["name" => 'roles.add', "title" => 'Rollar qo\'shish', "guard_name" => 'web'],
-                    ["name" => 'roles.delete', "title" => 'Rollarni o\'chirish', "guard_name" => 'web'],
-
-                    ["name" => 'user.show', "title" => 'Userlarni ko\'rish', "guard_name" => 'web'],
-                    ["name" => 'user.edit', "title" => 'Userlarni o\'zgartirish', "guard_name" => 'web'],
-                    ["name" => 'user.add', "title" => 'Yangi Userlarni qo\'shish', "guard_name" => 'web'],
-                    ["name" => 'user.delete', "title" => 'Userlarni o\'chirish', "guard_name" => 'web'],
-                    ["name" => 'api-user.add', "title" => 'ApiUser Add', "guard_name" => 'web'],
-                    ["name" => 'api-user.view', "title" => 'ApiUser View', "guard_name" => 'web'],
-                    ["name" => 'api-user.edit', "title" => 'ApiUser Edit', "guard_name" => 'web'],
-                    ["name" => 'api-user-passport.view', "title" => 'ApiUser Password view', "guard_name" => 'web'],
-                ]);
-            }
-
-            $role_cnt = Role::count();
-
-            if ($role_cnt === 0)
+            # Register default if permissions is not registered yet
+            if (!Role::count())
             {
                 Role::create([
                     'name' => 'Super Admin',
-                    'title' => 'Super Admin',
                     'guard_name' => 'web'
                 ]);
             }
 
-            $user->assignRole('Super admin');
+            $user->assignRole('Super Admin');
         }
 
         return $user;

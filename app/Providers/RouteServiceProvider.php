@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 class RouteServiceProvider extends ServiceProvider
 {
 
-    protected $namespace = 'App\Http\Controllers';
+    protected $namespace = '';
     /**
      * The path to the "home" route for your application.
      *
@@ -19,7 +19,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/home';
+    public const HOME = '/';
     public const WELCOME = '/';
 
     /**
