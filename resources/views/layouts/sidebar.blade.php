@@ -41,6 +41,12 @@
                 </li>
                 @endcanany
 
+                <li class="{{ Request::is('tasks*') ? "mm-active":''}}">
+                    <a href="{{ route('tasks.index') }}" class="waves-effect">
+                        <i class="fas fa-tasks"></i>
+                        <span>Задачи</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

@@ -9,12 +9,13 @@
     "license": "MIT",
     "require": {
         "php": "^7.4|^8.0",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
-        "spatie/laravel-permission": "3.17",
-        "ext-curl": "*",
-      "ext-json": "*"
+        "spatie/laravel-permission": "3.17"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

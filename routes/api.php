@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\MainController;
+use App\Http\Controllers\Api\TaskController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,3 +25,5 @@ Route::post('/switch-theme',function (Request $request){
     $user = \App\Models\User::find($request->user_id);
     return $user->switchTheme();
 })->name('switchTheme');
+
+Route::post('/task-create', [TaskController::class, 'store'])->name('tasks.create');
