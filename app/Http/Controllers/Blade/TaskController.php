@@ -14,6 +14,10 @@ class TaskController extends Controller
         $yesterday = Carbon::now()->subDay();
 
         $tasks = Task::all()->groupBy('chat_name');
+        
+        foreach ($tasks as $chatId => $group) {
+            $group->first()->updateChatName();
+        }
 
         $lastTasksCounts = [];
         foreach ($tasks as $chatName => $group) {
@@ -29,9 +33,18 @@ class TaskController extends Controller
     {
         $tasks = Task::where('chat_id', $chat_id)
             ->where('is_archived', 0)
-            ->orderBy('created_at', 'desc')->get();
+            ->orderBy('created_at', 'desc')->paginate(10);
         $chat_name = Task::where('chat_id', $chat_id)->first()->chat_name;
         return view('pages.task.group-tasks', compact('tasks', 'chat_name'));
+    }
+
+    public function show_archives($chat_id)
+    {
+        $tasks = Task::where('chat_id', $chat_id)
+            ->where('is_archived', 1)
+            ->orderBy('created_at', 'desc')->paginate(10);
+        $chat_name = Task::where('chat_id', $chat_id)->first()->chat_name;
+        return view('pages.task.archive', compact('tasks', 'chat_name'));
     }
 
     public function to_done($id)
@@ -46,8 +59,20 @@ class TaskController extends Controller
     public function to_archived($id)
     {
         $task = Task::find($id);
+        if ($task->is_done == 1) {
+            return response()->json(['success' => false]);
+        }
         $task->is_archived = 1;
         $task->archived($task->chat_id, $task->message_id);
+        $task->save();
+        return response()->json(['success' => true]);
+    }
+
+    public function unzip($id)
+    {
+        $task  = Task::find($id);
+        $task->is_archived = 0;
+        $task->unzip($task->chat_id, $task->message_id);
         $task->save();
         return response()->json(['success' => true]);
     }

@@ -20,30 +20,35 @@
                             Группы чатов
                         </div>
                         <div class="col-sm-12 col-lg-12">
-                            <table class="table table-responsive table-responsive-sm align-middle">
-                                <thead>
-                                <tr>
-                                    <th>Чат</th>
-                                    <th>Действие</th>
-                                </tr>
-                                </thead>
-                                <tbody>
+                            <ul class="simplebar-content list-unstyled chat-list p-0">
                                 @foreach($tasks as $chatName => $groupTasks)
-                                    <tr>
-                                        <td>{{ $chatName }}</td>
-                                        <td>
-                                            <a href="{{ route('tasks.group', $groupTasks->first()->chat_id) }}" class="btn btn-primary position-relative">
-                                                Посмотреть задачи
-                                                <span class="{{ $lastTasksCounts[$chatName] == 0 ? 'd-none' : '' }} position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                                    {{ $lastTasksCounts[$chatName] == 0 ? '' : $lastTasksCounts[$chatName] }}
-                                                <span class="visually-hidden">unread messages</span>
-                                                </span>
-                                            </a>
-                                        </td>
-                                    </tr>
+                                    <li class="p-2 border-bottom">
+                                        <a href="{{ route('tasks.group', $groupTasks->first()->chat_id) }}">
+                                            <div class="d-flex">
+                                                <div class="flex-shrink-0 align-self-center me-3">
+                                                    <i class="mdi mdi-circle font-size-10"></i>
+                                                </div>
+                                                <div class="flex-shrink-0 me-3">
+                                                    <div class="avatar-xs">
+                                                        <span class="avatar-title rounded-circle bg-primary bg-soft text-primary"> {{ $chatName[0] }} </span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex-grow-1 overflow-hidden">
+                                                    <h5 class="text-truncate font-size-14 mb-1">{{ $chatName }}</h5>
+                                                    <p class="mb-0 text-muted opacity-75"> {{ Str::limit($groupTasks->last()->text, 60) }} </p>
+                                                </div>
+                                                <div class="font-size-11">
+                                                    <span class="badge bg-primary fs-6 rounded-pill {{ $lastTasksCounts[$chatName] == 0 ? 'd-none' : '' }}">
+                                                        {{ $lastTasksCounts[$chatName] == 0 ? '' : $lastTasksCounts[$chatName] }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
                                 @endforeach
-                                </tbody>
-                            </table>
+
+                            </ul>
                         </div>
                         <div class="col-md-12 col-sm-12 mt-3">
                         </div>

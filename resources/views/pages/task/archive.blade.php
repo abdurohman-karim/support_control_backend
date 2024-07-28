@@ -1,20 +1,14 @@
 @extends('layouts.master')
 @section('title')
-    Задачи
+    Архив задач
 @endsection
 
 @section('content')
     <div class="row mb-3">
         <div class="col-lg-8 col-sm-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">Задачи c <span class="text-primary">{{ $tasks->first()->chat_name ?? '' }}</span></h4>
+                <h4 class="mb-sm-0 font-size-18">Архив задачи c <span class="text-primary">{{ $tasks->first()->chat_name ?? '' }}</span></h4>
             </div>
-        </div>
-        <div class="col-lg-4 col-sm-12 text-end">
-            <a href="{{ route('tasks.archives', $tasks->first()->chat_id ?? '') }}" class="btn btn-secondary btn-sm">
-                <i class="fas fa-archive"></i>
-                Архив
-            </a>
         </div>
     </div>
     <div class="row">
@@ -77,8 +71,8 @@
                                                 <button class="btn btn-success btn-sm done" data-id="{{ $task->id }}">
                                                     <i class="fa fa-check"></i>
                                                 </button>
-                                                <button class="btn btn-warning btn-sm archive" data-id="{{ $task->id }}">
-                                                    <i class="fa fa-arrow-up"></i>
+                                                <button class="btn btn-primary btn-sm unzip" data-id="{{ $task->id }}">
+                                                    <i class="fa fa-arrow-down"></i>
                                                 </button>
                                                 <button class="btn btn-danger btn-sm">
                                                     <i class="fa fa-trash"></i>
@@ -91,7 +85,16 @@
                             </table>
                         </div>
                         <div class="col-md-12 col-sm-12 mt-3">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
                             {{ $tasks->links() }}
+                        </div>
+                        <div class="col-md-12 col-sm-12 mt-3">
+                            <a href="{{ route('tasks.group', $tasks->first()->chat_id ?? '') }}" class="btn btn-secondary btn-sm">
+                                Назад к групповым задачам
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -129,14 +132,15 @@
                     }
                 });
             });
-            $('.archive').click(function(e) {
+            // unzip
+            $('.unzip').click(function(e) {
                 e.preventDefault();
 
                 var taskId = $(this).data('id');
                 var token = '{{ csrf_token() }}'; // Get CSRF token
 
                 $.ajax({
-                    url: '{{ url('tasks/to-archived') }}/' + taskId,
+                    url: '{{ url('tasks/unzip') }}/' + taskId,
                     type: 'GET',
                     data: {
                         _token: token
@@ -146,15 +150,15 @@
                             var taskRow = $('#task-' + taskId);
                             var statusBadge = taskRow.find('.badge');
                             statusBadge.removeClass('bg-danger text-danger')
-                                .addClass('bg-warning text-warning')
-                                .text('Архивировано');
+                                .addClass('bg-success text-success')
+                                .text('Разархивировано');
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('Error:', error);
                     }
                 });
-            })
+            });
         });
     </script>
 @endsection
