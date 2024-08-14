@@ -80,7 +80,7 @@
                                                 <button class="btn btn-warning btn-sm archive" data-id="{{ $task->id }}">
                                                     <i class="fa fa-arrow-up"></i>
                                                 </button>
-                                                <button class="btn btn-danger btn-sm">
+                                                <button class="btn btn-danger btn-sm delete" data-id="{{ $task->id }}">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </div>
@@ -113,7 +113,8 @@
                     url: '{{ url('tasks/to-done') }}/' + taskId,
                     type: 'GET',
                     data: {
-                        _token: token
+                        _token: token,
+                        comment: ''
                     },
                     success: function(data) {
                         if (data.success) {
@@ -148,6 +149,32 @@
                             statusBadge.removeClass('bg-danger text-danger')
                                 .addClass('bg-warning text-warning')
                                 .text('Архивировано');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            })
+            $('.delete').click(function(e) {
+                e.preventDefault();
+
+                var taskId = $(this).data('id');
+                var token = '{{ csrf_token() }}'; // Get CSRF token
+
+                $.ajax({
+                    url: '{{ url('tasks/to-delete') }}/' + taskId,
+                    type: 'GET',
+                    data: {
+                        _token: token
+                    },
+                    success: function(data) {
+                        if (data.success) {
+                            var taskRow = $('#task-' + taskId);
+                            var statusBadge = taskRow.find('.badge');
+                            statusBadge.removeClass('bg-success text-success')
+                                .addClass('bg-danger text-danger')
+                                .text('Удалено');
                         }
                     },
                     error: function(xhr, status, error) {

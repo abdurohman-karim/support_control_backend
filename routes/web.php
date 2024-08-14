@@ -21,6 +21,7 @@ Route::group(['middleware'=>"auth"],function (){
     // Tasks (ajax)
     Route::get('/tasks/to-done/{id}', [TaskController::class, 'to_done'])->name('tasks.to-done');
     Route::get('/tasks/to-archived/{id}', [TaskController::class, 'to_archived'])->name('tasks.to-archived');
+    Route::get('/tasks/to-delete/{id}', [TaskController::class, 'to_delete'])->name('tasks.to-delete');
     Route::get('/tasks/unzip/{id}', [TaskController::class, 'unzip'])->name('tasks.unzip');
 
 
