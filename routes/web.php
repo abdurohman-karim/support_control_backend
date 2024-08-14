@@ -7,6 +7,7 @@ use App\Http\Controllers\Blade\RolesController;
 use App\Http\Controllers\Blade\PermissionsController;
 use App\Http\Controllers\Blade\UserController;
 use App\Http\Controllers\Blade\TaskController;
+use App\Http\Controllers\Blade\ChatController;
 
 Auth::routes();
 Route::group(['middleware'=>"auth"],function (){
@@ -23,6 +24,10 @@ Route::group(['middleware'=>"auth"],function (){
     Route::get('/tasks/to-archived/{id}', [TaskController::class, 'to_archived'])->name('tasks.to-archived');
     Route::get('/tasks/to-delete/{id}', [TaskController::class, 'to_delete'])->name('tasks.to-delete');
     Route::get('/tasks/unzip/{id}', [TaskController::class, 'unzip'])->name('tasks.unzip');
+
+    // Message to chat
+    Route::get('/chats', [ChatController::class, 'index'])->name('chats.index');
+    Route::post('/chats', [ChatController::class, 'message'])->name('chats.message');
 
 
     # Resources
