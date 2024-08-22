@@ -41,6 +41,8 @@ class Task extends Model
             'parse_mode' => 'HTML'
         ];
 
+        Log::error("Telegram API request: " . json_encode($params));
+
         try {
             $response = $client->post($url, [
                 'json' => $params

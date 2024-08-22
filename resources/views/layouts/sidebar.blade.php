@@ -47,6 +47,12 @@
                         <span>Задачи</span>
                     </a>
                 </li>
+                <li class="{{ Request::is('messages*') ? "mm-active":''}}">
+                    <a href="{{ route('chats.index') }}" class="waves-effect">
+                        <i class="fas fa-comments"></i>
+                        <span>Сообщения к чатам</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
