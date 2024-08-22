@@ -25,7 +25,7 @@ class Task extends Model
         'message_id'
     ];
 
-    public function done($chat_id, $message_id)
+    public function done($chat_id, $message_id, $comment = null)
     {
         $telegram_api_token = env('TELEGRAM_API_TOKEN');
         $text = "Задача выполнена";
@@ -36,7 +36,7 @@ class Task extends Model
 
         $params = [
             'chat_id' => $chat_id,
-            'text' => $text,
+            'text' => $text . "\n" . $comment,
             'reply_to_message_id' => $message_id,
             'parse_mode' => 'HTML'
         ];
@@ -52,7 +52,7 @@ class Task extends Model
                 return false;
             }
         } catch (\Exception $e) {
-            \Log::error("Ошибка при отправке сообщения в Telegram: " . $e->getMessage());
+            Log::error("Ошибка при отправке сообщения в Telegram: " . $e->getMessage());
             return false;
         }
     }
@@ -84,7 +84,7 @@ class Task extends Model
                 return false;
             }
         } catch (\Exception $e) {
-            \Log::error("Ошибка при отправке сообщения в Telegram: " . $e->getMessage());
+            Log::error("Ошибка при отправке сообщения в Telegram: " . $e->getMessage());
             return false;
         }
     }
@@ -116,7 +116,7 @@ class Task extends Model
                 return false;
             }
         } catch (\Exception $e) {
-            \Log::error("Ошибка при отправке сообщения в Telegram: " . $e->getMessage());
+            Log::error("Ошибка при отправке сообщения в Telegram: " . $e->getMessage());
             return false;
         }
     }
