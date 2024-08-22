@@ -23,7 +23,7 @@ class Chat extends Model
         $params = [
             'chat_id' => $chat_id,
             'text' => $message_text,
-            'parse_mode' => 'HTML', // Optional, depending on your needs
+            'parse_mode' => 'HTML',
         ];
 
         Log::error("Telegram API request: " . json_encode($params));
